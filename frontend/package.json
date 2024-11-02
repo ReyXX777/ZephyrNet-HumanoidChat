@@ -1,0 +1,46 @@
+{
+  "name": "zephyrnet-humanoidchat-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for ZephyrNet-HumanoidChat application",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .js,.jsx",
+    "lint:fix": "eslint src --ext .js,.jsx --fix",
+    "serve": "npx serve -s build"  // Optional: Serves build files for testing production locally
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-scripts": "5.0.1",
+    "axios": "^0.27.2",                // For making API requests to the backend
+    "react-router-dom": "^6.3.0",      // For client-side routing
+    "prop-types": "^15.8.1"            // For type checking props in components
+  },
+  "devDependencies": {
+    "eslint": "^8.12.0",               // Linting for JavaScript
+    "eslint-plugin-react": "^7.29.0",  // Additional linting rules for React
+    "eslint-plugin-jsx-a11y": "^6.5.1" // Linting for accessibility checks in JSX
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  }
+}
