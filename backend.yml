@@ -2,11 +2,13 @@ version: '3.8'
 
 services:
   backend:
-    image: node:14  # Or replace with your preferred Node.js version
+    build:
+      context: ./backend
+      dockerfile: Dockerfile  # Build the Node.js app using your Dockerfile
     container_name: zephyrnet_backend
     working_dir: /app
     volumes:
-      - ./backend:/app  # Mounts local backend directory to container
+      - ./backend:/app  # Mounts the local backend directory to the container
       - /app/node_modules
     environment:
       - NODE_ENV=production
