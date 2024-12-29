@@ -30,3 +30,35 @@ services:
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=80
+
+  backend:
+    image: node:14  # Or replace with your backend container image
+    container_name: zephyrnet_backend
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_BACKEND_URL=http://backend:5000  # Ensure this environment variable is set
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+  db:
+    image: postgres:13
+    container_name: zephyrnet_db
+    environment:
+      POSTGRES_DB: zephyrnet_chat
+      POSTGRES_USER: your_db_user
+      POSTGRES_PASSWORD: your_db_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    container_name: zephyrnet_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
