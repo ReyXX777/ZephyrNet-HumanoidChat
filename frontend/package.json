@@ -10,20 +10,20 @@
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx",
     "lint:fix": "eslint src --ext .js,.jsx --fix",
-    "serve": "npx serve -s build"  // Optional: Serves build files for testing production locally
+    "serve": "npx serve -s build" 
   },
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
-    "axios": "^0.27.2",                // For making API requests to the backend
-    "react-router-dom": "^6.3.0",      // For client-side routing
-    "prop-types": "^15.8.1"            // For type checking props in components
+    "axios": "^0.27.2",
+    "react-router-dom": "^6.3.0",
+    "prop-types": "^15.8.1"
   },
   "devDependencies": {
-    "eslint": "^8.12.0",               // Linting for JavaScript
-    "eslint-plugin-react": "^7.29.0",  // Additional linting rules for React
-    "eslint-plugin-jsx-a11y": "^6.5.1" // Linting for accessibility checks in JSX
+    "eslint": "^8.12.0",
+    "eslint-plugin-react": "^7.29.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1"
   },
   "browserslist": {
     "production": [
