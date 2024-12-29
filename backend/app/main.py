@@ -1,11 +1,16 @@
 from fastapi import FastAPI
-from .routes import voice
+from app.routes import api_router  # Import the central API router
 
 app = FastAPI()
 
-app.include_router(voice.router)
+# Include the central API router, which includes all route modules (voice, etc.)
+app.include_router(api_router)
 
 @app.get("/")
 def read_root():
-    return {"message": "AI Communication Tool Backend"}
-
+    """
+    Root endpoint that returns a basic message about the AI Communication Tool Backend.
+    Returns:
+        dict: A simple message indicating the backend is running.
+    """
+    return {"message": "AI Communication Tool Backend is running"}
