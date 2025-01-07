@@ -7,11 +7,13 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>ZephyrNet HumanoidChat</title>
 
-  <!-- Meta Tags for SEO and Social Sharing -->
+  <!-- Meta Tags for SEO -->
   <meta name="title" content="ZephyrNet HumanoidChat">
   <meta name="description" content="A cutting-edge humanoid chat application powered by AI for seamless and intelligent interactions.">
+  <meta name="keywords" content="AI, Chat, Humanoid, Intelligent Interaction, ZephyrNet">
+  <meta name="author" content="Your Company or Team Name">
 
-  <!-- Open Graph Meta Tags -->
+  <!-- Open Graph Meta Tags for Social Sharing -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://yourdomain.com">
   <meta property="og:title" content="ZephyrNet HumanoidChat">
@@ -25,20 +27,29 @@
   <meta property="twitter:description" content="A cutting-edge humanoid chat application powered by AI for seamless and intelligent interactions.">
   <meta property="twitter:image" content="https://yourdomain.com/twitter-image.jpg">
 
-  <!-- Favicon and External Resources -->
+  <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="/styles.css">
 
-  <!-- JS Bundle (for React, Vue, or any other frontend framework) -->
+  <!-- External Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- JavaScript Bundle (e.g., React or Vue App) -->
   <script defer src="/bundle.js"></script>
 </head>
 
 <body>
-  <!-- This message will appear if JavaScript is disabled in the user's browser -->
-  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <!-- Accessible ARIA Roles for Root Container -->
+  <noscript>
+    <p style="color: red; text-align: center;">You need to enable JavaScript to run this app.</p>
+  </noscript>
 
   <!-- Root element for the JavaScript application -->
-  <div id="root"></div>
+  <div id="root" role="main" aria-label="Humanoid Chat Application"></div>
 </body>
 
 </html>
