@@ -2,17 +2,18 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+import string
 
 # Download necessary NLTK resources
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
 
 def preprocess_text(text: str) -> str:
     """
     Preprocess the input text by:
     - Converting to lowercase
-    - Removing non-alphanumeric characters except spaces
+    - Removing punctuation and non-alphanumeric characters except spaces
     - Tokenizing the text
     - Removing stopwords
     - Lemmatizing each token
@@ -21,11 +22,14 @@ def preprocess_text(text: str) -> str:
     Returns:
         str: The preprocessed text.
     """
+    if not text.strip():
+        raise ValueError("Input text cannot be empty or just whitespace.")
+    
     # Convert to lowercase
     text = text.lower()
     
-    # Remove non-alphanumeric characters except spaces
-    text = ''.join(c for c in text if c.isalnum() or c.isspace())
+    # Remove punctuation
+    text = text.translate(str.maketrans('', '', string.punctuation))
     
     # Tokenize the text
     tokens = word_tokenize(text)
@@ -49,9 +53,17 @@ def extract_keywords(text: str) -> list:
     Returns:
         list: List of unique keywords.
     """
-    text = preprocess_text(text)
-    tokens = word_tokenize(text)
-    return list(set(tokens))
+    if not text.strip():
+        raise ValueError("Input text cannot be empty or just whitespace.")
+    
+    # Preprocess text
+    preprocessed_text = preprocess_text(text)
+    
+    # Tokenize the preprocessed text
+    tokens = word_tokenize(preprocessed_text)
+    
+    # Return unique keywords
+    return sorted(set(tokens))  # Sorted for consistency
 
 def generate_response(text: str) -> str:
     """
@@ -61,9 +73,23 @@ def generate_response(text: str) -> str:
     Returns:
         str: The response based on keywords in the text.
     """
+    if not text.strip():
+        raise ValueError("Input text cannot be empty or just whitespace.")
+    
+    # Preprocess text and extract keywords
+    keywords = extract_keywords(text)
+    
     # Basic keyword-based response generation
-    if "weather" in text:
-        return "The weather is beautiful today!"
-    elif "restaurant" in text:
-        return "I know a great Italian restaurant nearby!"
-    return "I understand your request. Can you please rephrase it?"
+    if "weather" in keywords:
+        return "The weather is beautiful today! How can I assist you further?"
+    elif "restaurant" in keywords:
+        return "I know a great Italian restaurant nearby! Would you like directions?"
+    else:
+        return "I understand your request. Can you please provide more details or rephrase?"
+
+# Example Usage
+if __name__ == "__main__":
+    user_input = "Can you recommend a good restaurant nearby?"
+    print("User Input:", user_input)
+    response = generate_response(user_input)
+    print("Response:", response)
