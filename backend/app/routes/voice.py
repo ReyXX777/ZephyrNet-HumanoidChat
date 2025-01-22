@@ -4,6 +4,8 @@ from typing import Optional
 from app.services.speech_to_text import transcribe_audio
 from app.services.text_to_speech import synthesize_speech
 from googletrans import Translator, LANGUAGES
+import uuid
+import os
 
 router = APIRouter(
     prefix="/voice",
@@ -99,3 +101,42 @@ async def translate_text_endpoint(
         raise HTTPException(status_code=400, detail=f"Translation error: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Translation failed: {str(e)}")
+
+@router.post("/save_audio")
+async def save_audio_endpoint(audio_file: UploadFile = File(...)):
+    """
+    Endpoint to save an uploaded audio file to the server.
+    
+    Args:
+        audio_file (UploadFile): Audio file uploaded by the user.
+    
+    Returns:
+        JSONResponse: File path where the audio is saved.
+    """
+    if not audio_file.content_type.startswith("audio/"):
+        raise HTTPException(
+            status_code=400, 
+            detail="Invalid file type. Please upload an audio file."
+        )
+    try:
+        file_id = str(uuid.uuid4())
+        file_path = f"uploads/{file_id}_{audio_file.filename}"
+        os.makedirs("uploads", exist_ok=True)
+        with open(file_path, "wb") as buffer:
+            buffer.write(await audio_file.read())
+        return JSONResponse(content={"file_path": file_path})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save audio file: {str(e)}")
+
+@router.get("/languages")
+async def get_supported_languages():
+    """
+    Endpoint to retrieve a list of supported languages for translation.
+    
+    Returns:
+        JSONResponse: List of supported languages.
+    """
+    try:
+        return JSONResponse(content={"languages": LANGUAGES})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve languages: {str(e)}")
