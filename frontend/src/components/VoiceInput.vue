@@ -14,6 +14,16 @@
     >
       Stop Recording
     </button>
+
+    <!-- Added Audio Playback Component -->
+    <div v-if="audioUrl" class="audio-playback">
+      <audio :src="audioUrl" controls></audio>
+    </div>
+
+    <!-- Added Microphone Permission Status -->
+    <div v-if="!isMicrophoneAllowed" class="permission-warning">
+      <p>Microphone access is required for recording. Please enable permissions.</p>
+    </div>
   </div>
 </template>
 
@@ -24,6 +34,8 @@ export default {
       isRecording: false,
       mediaRecorder: null,
       audioChunks: [],
+      audioUrl: null, // Added for audio playback
+      isMicrophoneAllowed: true, // Added to track microphone permission
     };
   },
   methods: {
@@ -33,6 +45,7 @@ export default {
         this.mediaRecorder = new MediaRecorder(stream);
         this.audioChunks = [];
         this.isRecording = true;
+        this.isMicrophoneAllowed = true; // Reset permission status
 
         this.mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
@@ -42,6 +55,7 @@ export default {
 
         this.mediaRecorder.onstop = () => {
           const audioBlob = new Blob(this.audioChunks, { type: "audio/wav" });
+          this.audioUrl = URL.createObjectURL(audioBlob); // Set audio URL for playback
           this.$emit("voiceInput", audioBlob);
           this.audioChunks = [];
         };
@@ -49,6 +63,7 @@ export default {
         this.mediaRecorder.start();
       } catch (error) {
         console.error("Error accessing microphone:", error);
+        this.isMicrophoneAllowed = false; // Update permission status
         alert("Unable to access microphone. Please check your permissions.");
       }
     },
@@ -98,5 +113,16 @@ export default {
 
 .stop-button:hover {
   background-color: #d32f2f;
+}
+
+.audio-playback {
+  margin-top: 20px;
+}
+
+.permission-warning {
+  margin-top: 10px;
+  color: #f44336;
+  font-weight: bold;
+  text-align: center;
 }
 </style>
