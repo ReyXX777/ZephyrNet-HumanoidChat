@@ -1,11 +1,9 @@
 import unittest
-
 from app.services.nlp import (
     preprocess_text,
     extract_keywords,
     generate_response,
 )
-
 
 class TestNLP(unittest.TestCase):
 
@@ -29,6 +27,18 @@ class TestNLP(unittest.TestCase):
         self.assertIsNotNone(response)
         self.assertNotEqual(response, "")
 
+    def test_generate_response_with_unknown_keyword(self):
+        text = "Tell me about quantum physics."
+        response = generate_response(text)
+        self.assertEqual(response, "I understand your request. Can you please provide more details or rephrase?")
+
+    def test_extract_keywords_empty_input(self):
+        with self.assertRaises(ValueError):
+            extract_keywords("")
+
+    def test_preprocess_text_empty_input(self):
+        with self.assertRaises(ValueError):
+            preprocess_text("")
 
 if __name__ == '__main__':
     unittest.main()
