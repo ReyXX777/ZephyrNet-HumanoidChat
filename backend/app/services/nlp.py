@@ -84,8 +84,37 @@ def generate_response(text: str) -> str:
         return "The weather is beautiful today! How can I assist you further?"
     elif "restaurant" in keywords:
         return "I know a great Italian restaurant nearby! Would you like directions?"
+    elif "help" in keywords:
+        return "Sure, I'm here to help! What do you need assistance with?"
+    elif "thank" in keywords:
+        return "You're welcome! Let me know if you need anything else."
     else:
         return "I understand your request. Can you please provide more details or rephrase?"
+
+def calculate_sentiment_score(text: str) -> int:
+    """
+    Calculate a simple sentiment score based on the presence of positive or negative words.
+    Args:
+        text (str): The input text to analyze.
+    Returns:
+        int: Sentiment score (1 for positive, -1 for negative, 0 for neutral).
+    """
+    positive_words = {"happy", "good", "great", "awesome", "love"}
+    negative_words = {"sad", "bad", "terrible", "hate", "awful"}
+    
+    # Preprocess text and extract keywords
+    keywords = extract_keywords(text)
+    
+    # Calculate sentiment score
+    positive_count = sum(1 for word in keywords if word in positive_words)
+    negative_count = sum(1 for word in keywords if word in negative_words)
+    
+    if positive_count > negative_count:
+        return 1
+    elif negative_count > positive_count:
+        return -1
+    else:
+        return 0
 
 # Example Usage
 if __name__ == "__main__":
@@ -93,3 +122,7 @@ if __name__ == "__main__":
     print("User Input:", user_input)
     response = generate_response(user_input)
     print("Response:", response)
+    
+    sentiment_input = "I feel happy and excited today!"
+    sentiment_score = calculate_sentiment_score(sentiment_input)
+    print("Sentiment Score:", sentiment_score)
