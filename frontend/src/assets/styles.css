@@ -156,3 +156,62 @@ footer {
     font-size: 1.5rem;
   }
 }
+
+/* Added Loading Spinner Styles */
+#loading-spinner {
+  display: none;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Added Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  header, .chatbox, footer {
+    background-color: #1e1e1e;
+    border-color: #333;
+  }
+
+  .chatbox .message .content {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+  }
+
+  .chatbox .message.user .content {
+    background-color: #1a3a1a;
+  }
+
+  .chat-input input[type="text"] {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #333;
+  }
+
+  .chat-input button {
+    background-color: #007bff;
+  }
+
+  .chat-input button:hover {
+    background-color: #0056b3;
+  }
+}
