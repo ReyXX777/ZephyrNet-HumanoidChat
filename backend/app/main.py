@@ -40,3 +40,34 @@ def health_check():
         dict: A message indicating the application is healthy.
     """
     return {"status": "healthy", "version": "1.0.0", "uptime": "Service is operational."}
+
+@app.get("/info", tags=["System Info"])
+def system_info():
+    """
+    System information endpoint to provide details about the application and environment.
+    Returns:
+        dict: A dictionary containing system information.
+    """
+    import platform
+    import os
+    return {
+        "system": platform.system(),
+        "node": platform.node(),
+        "release": platform.release(),
+        "version": platform.version(),
+        "python_version": platform.python_version(),
+        "environment": os.getenv("ENVIRONMENT", "development")
+    }
+
+@app.post("/feedback", tags=["Feedback"])
+def submit_feedback(feedback: str):
+    """
+    Endpoint to submit user feedback.
+    Args:
+        feedback (str): The feedback provided by the user.
+    Returns:
+        dict: A confirmation message.
+    """
+    # Log feedback (in a real application, this would be saved to a database)
+    print(f"Feedback received: {feedback}")
+    return {"message": "Thank you for your feedback!"}
