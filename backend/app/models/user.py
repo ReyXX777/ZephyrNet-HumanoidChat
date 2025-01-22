@@ -43,6 +43,14 @@ class User(UserBase):
         None, 
         description="Timestamp when the user account was last updated"
     )
+    is_active: bool = Field(
+        True, 
+        description="Indicates if the user account is active"
+    )
+    last_login: Optional[datetime] = Field(
+        None, 
+        description="Timestamp of the user's last login"
+    )
 
     class Config:
         orm_mode = True  # Enables ORM integration for tools like SQLAlchemy
@@ -73,7 +81,10 @@ class UserUpdate(BaseModel):
         None, 
         description="Updated bio or brief description of the user"
     )
+    is_active: Optional[bool] = Field(
+        None, 
+        description="Update the active status of the user account"
+    )
 
     class Config:
         orm_mode = True
-
