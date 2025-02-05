@@ -1,10 +1,14 @@
 # ZephyrNet-HumanoidChat/backend/app/utils/helpers.py
 
-from typing import List, Dict, Optional
+from typing import List, Optional
 import hashlib
 import uuid
 from datetime import datetime
 import re
+
+# Compile regex patterns once for reuse
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+HASHTAG_REGEX = re.compile(r"#\w+")
 
 def generate_unique_id() -> str:
     """
@@ -25,6 +29,8 @@ def hash_string(input_string: str) -> str:
     Returns:
         str: The hashed string.
     """
+    if not input_string:
+        raise ValueError("Input string cannot be empty.")
     return hashlib.sha256(input_string.encode()).hexdigest()
 
 def validate_email(email: str) -> bool:
@@ -37,8 +43,9 @@ def validate_email(email: str) -> bool:
     Returns:
         bool: True if the email is valid, False otherwise.
     """
-    regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return re.match(regex, email) is not None
+    if not email:
+        raise ValueError("Email address cannot be empty.")
+    return bool(EMAIL_REGEX.match(email))
 
 def format_timestamp(timestamp: datetime) -> str:
     """
@@ -50,6 +57,8 @@ def format_timestamp(timestamp: datetime) -> str:
     Returns:
         str: Formatted timestamp string.
     """
+    if not isinstance(timestamp, datetime):
+        raise TypeError("Input must be a datetime object.")
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
 def truncate_text(text: str, max_length: int = 100) -> str:
@@ -63,9 +72,11 @@ def truncate_text(text: str, max_length: int = 100) -> str:
     Returns:
         str: Truncated text.
     """
-    if len(text) <= max_length:
-        return text
-    return text[:max_length] + "..."
+    if not text:
+        raise ValueError("Input text cannot be empty.")
+    if max_length <= 0:
+        raise ValueError("Maximum length must be a positive integer.")
+    return text[:max_length] + "..." if len(text) > max_length else text
 
 def extract_hashtags(text: str) -> List[str]:
     """
@@ -77,7 +88,9 @@ def extract_hashtags(text: str) -> List[str]:
     Returns:
         List[str]: List of extracted hashtags.
     """
-    return re.findall(r"#\w+", text)
+    if not text:
+        raise ValueError("Input text cannot be empty.")
+    return HASHTAG_REGEX.findall(text)
 
 def calculate_reading_time(text: str, words_per_minute: int = 200) -> int:
     """
@@ -90,6 +103,10 @@ def calculate_reading_time(text: str, words_per_minute: int = 200) -> int:
     Returns:
         int: Estimated reading time in minutes.
     """
+    if not text:
+        raise ValueError("Input text cannot be empty.")
+    if words_per_minute <= 0:
+        raise ValueError("Words per minute must be a positive integer.")
     word_count = len(text.split())
     return max(1, word_count // words_per_minute)
 
