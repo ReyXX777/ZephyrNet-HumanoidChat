@@ -1,8 +1,8 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException, Form
+from fastapi import APIRouter, File, UploadFile, HTTPException, Form, Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
 from app.services.speech_to_text import transcribe_audio
-from app.services.text_to_speech import synthesize_speech
+from app.services.text_to_audio import synthesize_speech
 from googletrans import Translator, LANGUAGES
 import uuid
 import os
@@ -11,6 +11,35 @@ router = APIRouter(
     prefix="/voice",
     tags=["Voice"]
 )
+
+# Dependency for Translator
+def get_translator():
+    return Translator()
+
+# Helper function to validate audio files
+def validate_audio_file(file: UploadFile):
+    if not file.content_type.startswith("audio/"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Please upload an audio file."
+        )
+
+# Helper function to validate languages
+def validate_languages(source_language: str, target_language: str):
+    if source_language not in LANGUAGES or target_language not in LANGUAGES:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid source or target language. Please use valid language codes."
+        )
+
+# Helper function to save uploaded files
+async def save_uploaded_file(file: UploadFile, directory: str = "uploads"):
+    file_id = str(uuid.uuid4())
+    file_path = f"{directory}/{file_id}_{file.filename}"
+    os.makedirs(directory, exist_ok=True)
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+    return file_path
 
 @router.post("/transcribe")
 async def transcribe_audio_endpoint(audio_file: UploadFile = File(...)):
@@ -23,11 +52,7 @@ async def transcribe_audio_endpoint(audio_file: UploadFile = File(...)):
     Returns:
         JSONResponse: Transcribed text.
     """
-    if not audio_file.content_type.startswith("audio/"):
-        raise HTTPException(
-            status_code=400, 
-            detail="Invalid file type. Please upload an audio file."
-        )
+    validate_audio_file(audio_file)
     try:
         text = await transcribe_audio(audio_file)
         return JSONResponse(content={"text": text})
@@ -55,7 +80,7 @@ async def synthesize_speech_endpoint(
     """
     if not text.strip():
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="Text input cannot be empty."
         )
     try:
@@ -70,7 +95,8 @@ async def synthesize_speech_endpoint(
 async def translate_text_endpoint(
     text: str = Form(..., description="Text to translate"),
     source_language: str = Form(..., description="Source language code"),
-    target_language: str = Form(..., description="Target language code")
+    target_language: str = Form(..., description="Target language code"),
+    translator: Translator = Depends(get_translator)
 ):
     """
     Endpoint to translate text between languages.
@@ -83,18 +109,13 @@ async def translate_text_endpoint(
     Returns:
         JSONResponse: Translated text.
     """
-    if source_language not in LANGUAGES or target_language not in LANGUAGES:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid source or target language. Please use valid language codes."
-        )
+    validate_languages(source_language, target_language)
     if not text.strip():
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="Text input cannot be empty."
         )
     try:
-        translator = Translator()
         translated_text = translator.translate(text, src=source_language, dest=target_language).text
         return JSONResponse(content={"translated_text": translated_text})
     except ValueError as e:
@@ -113,17 +134,9 @@ async def save_audio_endpoint(audio_file: UploadFile = File(...)):
     Returns:
         JSONResponse: File path where the audio is saved.
     """
-    if not audio_file.content_type.startswith("audio/"):
-        raise HTTPException(
-            status_code=400, 
-            detail="Invalid file type. Please upload an audio file."
-        )
+    validate_audio_file(audio_file)
     try:
-        file_id = str(uuid.uuid4())
-        file_path = f"uploads/{file_id}_{audio_file.filename}"
-        os.makedirs("uploads", exist_ok=True)
-        with open(file_path, "wb") as buffer:
-            buffer.write(await audio_file.read())
+        file_path = await save_uploaded_file(audio_file)
         return JSONResponse(content={"file_path": file_path})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save audio file: {str(e)}")
