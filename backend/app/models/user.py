@@ -1,6 +1,10 @@
 from typing import Optional
-from pydantic import BaseModel, Field, EmailStr
-from datetime import datetime  # For accurate timestamp typing and usage
+from pydantic import BaseModel, Field, EmailStr, validator
+from datetime import datetime
+from uuid import uuid4  # For generating unique IDs
+
+class BaseConfig:
+    orm_mode = True  # Enables ORM integration for tools like SQLAlchemy
 
 class UserBase(BaseModel):
     """
@@ -14,6 +18,12 @@ class UserBase(BaseModel):
         description="Password for the user, must be at least 8 characters"
     )
 
+    @validator('username')
+    def username_alphanumeric(cls, v):
+        if not v.isalnum():
+            raise ValueError('Username must be alphanumeric')
+        return v
+
 class UserCreate(UserBase):
     """
     Schema for creating a new user.
@@ -26,7 +36,7 @@ class User(UserBase):
     Full schema for a user.
     Extends UserBase with additional fields like id, profile_picture, bio, created_at, and updated_at.
     """
-    id: int = Field(..., description="Unique identifier for the user")
+    id: str = Field(default_factory=lambda: str(uuid4()), description="Unique identifier for the user")
     profile_picture: Optional[str] = Field(
         None, 
         description="URL to the user's profile picture"
@@ -35,16 +45,16 @@ class User(UserBase):
         None, 
         description="A brief bio or description of the user"
     )
-    created_at: Optional[datetime] = Field(
-        None, 
+    created_at: datetime = Field(
+        default_factory=datetime.utcnow, 
         description="Timestamp when the user account was created"
     )
-    updated_at: Optional[datetime] = Field(
-        None, 
+    updated_at: datetime = Field(
+        default_factory=datetime.utcnow, 
         description="Timestamp when the user account was last updated"
     )
     is_active: bool = Field(
-        True, 
+        default=True, 
         description="Indicates if the user account is active"
     )
     last_login: Optional[datetime] = Field(
@@ -52,8 +62,8 @@ class User(UserBase):
         description="Timestamp of the user's last login"
     )
 
-    class Config:
-        orm_mode = True  # Enables ORM integration for tools like SQLAlchemy
+    class Config(BaseConfig):
+        pass
 
 class UserUpdate(BaseModel):
     """
@@ -86,5 +96,5 @@ class UserUpdate(BaseModel):
         description="Update the active status of the user account"
     )
 
-    class Config:
-        orm_mode = True
+    class Config(BaseConfig):
+        pass
