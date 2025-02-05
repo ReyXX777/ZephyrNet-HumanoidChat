@@ -9,6 +9,10 @@ nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 
+# Initialize NLTK components
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
+
 def preprocess_text(text: str) -> str:
     """
     Preprocess the input text by:
@@ -35,11 +39,9 @@ def preprocess_text(text: str) -> str:
     tokens = word_tokenize(text)
     
     # Remove stopwords
-    stop_words = set(stopwords.words('english'))
     tokens = [token for token in tokens if token not in stop_words]
     
     # Lemmatize tokens
-    lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(token) for token in tokens]
     
     # Return the processed text
